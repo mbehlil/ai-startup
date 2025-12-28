@@ -3,430 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Startup: IPO Edition</title>
+    <title>Cyber Idle: Breach Protocol</title>
     <style>
-        :root {
-            --primary: #00ff88;
-            --secondary: #00ccff; /* New secondary color for Prestige */
-            --bg: #0a0a0a;
-            --panel: #141414;
-            --text: #e0e0e0;
-            --danger: #ff4444;
-        }
-
+        /* --- GLOBAL STYLES --- */
         body {
-            font-family: 'Courier New', monospace;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: #0d0d0d;
+            color: #00ff41;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            user-select: none;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+            touch-action: manipulation; /* Improves touch response */
         }
 
-        /* News Ticker */
-        .news-ticker {
-            width: 100%;
-            background: #000;
-            color: var(--primary);
-            padding: 5px 0;
-            font-size: 0.8em;
-            white-space: nowrap;
-            overflow: hidden;
-            border-bottom: 1px solid #333;
-        }
-        .ticker-content {
-            display: inline-block;
-            padding-left: 100%;
-            animation: ticker 15s linear infinite;
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-        h1 { margin-top: 10px; font-size: 1.5em; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Dashboard */
-        .dashboard {
-            text-align: center;
-            margin: 10px;
-            padding: 20px;
-            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
-            border-radius: 15px;
-            border: 1px solid #333;
-            width: 320px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        #score { font-size: 2.5em; font-weight: bold; color: white; display: block; line-height: 1; margin-bottom: 5px; }
-        .currency-label { color: var(--primary); font-size: 0.8em; margin-bottom: 15px; display: block; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            text-align: left;
-            font-size: 0.8em;
-            background: #000;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .stat-label { color: #666; }
-        .stat-val { color: white; font-weight: bold; float: right; }
-        .stat-val.prestige { color: var(--secondary); }
-
-        /* The Button */
-        #click-btn {
-            width: 140px; 
-            height: 140px; 
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #333, #000);
-            border: 4px solid var(--primary); 
-            color: var(--primary);
-            font-size: 1.1em; 
-            font-weight: bold; 
-            cursor: pointer;
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.1); 
-            margin: 20px;
-            position: relative; 
-            z-index: 1; 
-            transition: transform 0.1s;
-            
-            /* --- THE FIX --- */
-            touch-action: manipulation; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none;
-        }
-        #click-btn:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-
-        /* Shop Area */
-        .section-title { width: 100%; text-align: center; margin: 20px 0 10px; color: #888; border-bottom: 1px solid #333; line-height: 0.1em; margin-bottom: 20px; } 
-        .section-title span { background: var(--bg); padding: 0 10px; }
-
-        .shop { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 800px; padding-bottom: 50px; }
-
-        .upgrade-card {
-            background: var(--panel);
-            border: 1px solid #333;
-            padding: 12px;
-            border-radius: 8px;
-            width: 130px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-            position: relative;
-        }
-        .upgrade-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .upgrade-card.disabled { opacity: 0.4; pointer-events: none; filter: grayscale(1); }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .lvl-badge { background: #333; color: white; font-size: 0.6em; padding: 2px 5px; border-radius: 4px; }
-        
-        .name { font-weight: bold; color: var(--primary); display: block; font-size: 0.9em; }
-        .bonus { font-size: 0.7em; color: #888; display: block; margin-bottom: 5px; }
-        .cost { color: var(--danger); font-weight: bold; font-size: 0.9em; }
-
-        /* Prestige Modal */
-        #prestige-btn {
-            background: linear-gradient(45deg, #003366, #00ccff);
-            width: 100%;
-            max-width: 300px;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+        h1 {
+            font-size: 1.5rem;
             margin-top: 20px;
-            display: none; /* Hidden until relevant */
+            text-shadow: 0 0 5px #00ff41;
         }
 
-        /* Floating Particles CSS */
-        .particle {
-            position: absolute;
-            color: var(--primary);
+        /* --- SCORE BOARD --- */
+        #score-container {
+            font-size: 2rem;
             font-weight: bold;
-            pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            font-size: 1.2em;
-            text-shadow: 0 0 5px rgba(0,255,136,0.5);
-            z-index: 100;
+            margin: 20px 0;
+            border: 1px solid #00ff41;
+            padding: 10px 30px;
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-        }
-
-    </style>
-</head>
-<body>
-
-    <div class="news-ticker">
-        <div class="ticker-content" id="ticker">BREAKING: AI Writes "Hello World" in record time... Stocks soar... Human developers nervous...</div>
-    </div>
-
-    <h1>AI STARTUP INC.</h1>
-
-    <div class="dashboard">
-        <span id="score">0</span>
-        <span class="currency-label">Lines of Code (LOC)</span>
-        
-        <div class="stats-grid">
-            <span class="stat-label">Income/sec:</span>
-            <span class="stat-val" id="gps">0</span>
+        /* --- MAIN CLICKER BUTTON --- */
+        #hack-btn {
+            background-color: #000;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin-bottom: 30px;
             
-            <span class="stat-label">Click Power:</span>
-            <span class="stat-val" id="click-power">1</span>
-
-            <span class="stat-label">Prestige Mult:</span>
-            <span class="stat-val prestige" id="mult-display">x1.0</span>
-        </div>
-    </div>
-
-    <button id="click-btn" onclick="manualClick(event)">WRITE<br>CODE</button>
-
-    <div class="shop">
-        <h2 class="section-title"><span>UPGRADES</span></h2>
-
-        <div class="upgrade-card" id="btn-keyboard" onclick="buyUpgrade('keyboard')">
-            <div class="card-header">
-                <span class="name">Mech Keyboard</span>
-                <span class="lvl-badge" id="lvl-keyboard">Lvl 0</span>
-            </div>
-            <span class="bonus">+1 Click Power</span>
-            <span class="cost" id="cost-keyboard">50</span>
-        </div>
-
-        <div class="upgrade-card" id="btn-intern" onclick="buyUpgrade('intern')">
-            <div class="card-header">
-                <span class="name">Hire Intern</span>
-                <span class="lvl-badge" id="lvl-intern">Lvl 0</span>
-            </div>
-            <span class="bonus">+1 LOC/sec</span>
-            <span class="cost" id="cost-intern">15</span>
-        </div>
-        
-        <div class="upgrade-card" id="btn-copilot" onclick="buyUpgrade('copilot')">
-            <div class="card-header">
-                <span class="name">AI Copilot</span>
-                <span class="lvl-badge" id="lvl-copilot">Lvl 0</span>
-            </div>
-            <span class="bonus">+5 LOC/sec</span>
-            <span class="cost" id="cost-copilot">250</span>
-        </div>
-
-        <div class="upgrade-card" id="btn-server" onclick="buyUpgrade('server')">
-            <div class="card-header">
-                <span class="name">Server Farm</span>
-                <span class="lvl-badge" id="lvl-server">Lvl 0</span>
-            </div>
-            <span class="bonus">+25 LOC/sec</span>
-            <span class="cost" id="cost-server">1000</span>
-        </div>
-
-        <div class="upgrade-card" id="btn-quantum" onclick="buyUpgrade('quantum')">
-            <div class="card-header">
-                <span class="name">Quantum CPU</span>
-                <span class="lvl-badge" id="lvl-quantum">Lvl 0</span>
-            </div>
-            <span class="bonus">+150 LOC/sec</span>
-            <span class="cost" id="cost-quantum">5000</span>
-        </div>
-    </div>
-
-    <button id="prestige-btn" onclick="prestige()">IPO (RESET FOR BONUS)</button>
-
-    <script>
-        // --- Configuration & Data ---
-        const upgradeData = {
-            keyboard: { baseCost: 50, basePower: 1, type: 'click' },
-            intern:   { baseCost: 15, basePower: 1, type: 'auto' },
-            copilot:  { baseCost: 250, basePower: 5, type: 'auto' },
-            server:   { baseCost: 1000, basePower: 25, type: 'auto' },
-            quantum:  { baseCost: 5000, basePower: 150, type: 'auto' }
-        };
-
-        const headlines = [
-            "AI Startup receives $1B valuation...",
-            "Stack Overflow shuts down as AI answers everything...",
-            "Coffee consumption drops 50% as AI writes code...",
-            "Elon Musk tweets about your startup...",
-            "Your AI accidentally deleted a database (Oops)..."
-        ];
-
-        // --- Game State ---
-        let game = {
-            lines: 0,
-            lifetimeLines: 0, // For prestige calculation
-            prestigeMultiplier: 1.0,
-            
-            // Upgrade Levels
-            levels: {
-                keyboard: 0,
-                intern: 0,
-                copilot: 0,
-                server: 0,
-                quantum: 0
-            }
-        };
-
-        // --- Core Functions ---
-
-        function getCost(key) {
-            // Formula: BaseCost * (1.5 ^ Level)
-            return Math.floor(upgradeData[key].baseCost * Math.pow(1.5, game.levels[key]));
+            /* Center text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
-        function getClickPower() {
-            // Base 1 + (Keyboard Level * Power) * Prestige
-            let raw = 1 + (game.levels.keyboard * upgradeData.keyboard.basePower);
-            return raw * game.prestigeMultiplier;
+        #hack-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+            background-color: rgba(0, 255, 65, 0.1);
         }
 
-        function getAutoRate() {
-            let rate = 0;
-            rate += game.levels.intern * upgradeData.intern.basePower;
-            rate += game.levels.copilot * upgradeData.copilot.basePower;
-            rate += game.levels.server * upgradeData.server.basePower;
-            rate += game.levels.quantum * upgradeData.quantum.basePower;
-            return rate * game.prestigeMultiplier;
+        /* --- UPGRADES SECTION --- */
+        #upgrades {
+            width: 90%;
+            max-width: 400px;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+            text-align: center;
         }
 
-        function manualClick(event) {
-            const power = getClickPower();
-            addLines(power);
-            spawnParticle(event.clientX, event.clientY, formatNumber(power));
-        }
-
-        function addLines(amount) {
-            game.lines += amount;
-            game.lifetimeLines += amount;
-            updateUI();
-        }
-
-        function buyUpgrade(key) {
-            const cost = getCost(key);
-            if (game.lines >= cost) {
-                game.lines -= cost;
-                game.levels[key]++;
-                updateUI();
-                saveGame();
-            }
-        }
-
-        // --- Visuals & Particles ---
-
-        function spawnParticle(x, y, text) {
-            const el = document.createElement('div');
-            el.className = 'particle';
-            el.innerText = '+' + text;
-            
-            // Randomize position slightly
-            const randomX = (Math.random() - 0.5) * 40;
-            
-            el.style.left = (x + randomX) + 'px';
-            el.style.top = (y - 20) + 'px';
-            document.body.appendChild(el);
-
-            // Cleanup
-            setTimeout(() => el.remove(), 1000);
-        }
-
-        // --- Prestige System (IPO) ---
-        function calculatePrestigeBonus() {
-            // Formula: 1 + sqrt(lifetimeLines / 10000)
-            // Example: 10,000 lines = +1x multiplier (total 2x)
-            if (game.lifetimeLines < 10000) return 0;
-            return Math.sqrt(game.lifetimeLines / 10000);
-        }
-
-        function prestige() {
-            const bonus = calculatePrestigeBonus();
-            if (confirm(`Do an IPO? You will reset progress but gain +${bonus.toFixed(1)}x permanent multiplier.`)) {
-                game.prestigeMultiplier += bonus;
-                // Reset everything except multiplier
-                game.lines = 0;
-                game.lifetimeLines = 0;
-                game.levels = { keyboard: 0, intern: 0, copilot: 0, server: 0, quantum: 0 };
-                saveGame();
-                updateUI();
-            }
-        }
-
-        // --- Loop & System ---
-
-        setInterval(() => {
-            const rate = getAutoRate();
-            if (rate > 0) {
-                addLines(rate / 10); // Run 10 times a second for smoothness
-            }
-        }, 100);
-
-        setInterval(() => {
-            // Cycle headlines
-            const t = document.getElementById('ticker');
-            if (Math.random() > 0.7) {
-                 t.innerText = headlines[Math.floor(Math.random() * headlines.length)];
-            }
-        }, 5000);
-
-        // --- UI & Formatting ---
-
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-            return Math.floor(num);
-        }
-
-        function updateUI() {
-            document.getElementById('score').innerText = formatNumber(game.lines);
-            document.getElementById('gps').innerText = formatNumber(getAutoRate() * 10) + "/s"; // Display per sec (calculated per 0.1s above)
-            document.getElementById('click-power').innerText = formatNumber(getClickPower());
-            document.getElementById('mult-display').innerText = 'x' + game.prestigeMultiplier.toFixed(1);
-
-            // Update Cards
-            for (let key in upgradeData) {
-                const cost = getCost(key);
-                const btn = document.getElementById('btn-' + key);
-                document.getElementById('cost-' + key).innerText = formatNumber(cost);
-                document.getElementById('lvl-' + key).innerText = 'Lvl ' + game.levels[key];
-
-                if (game.lines < cost) btn.classList.add('disabled');
-                else btn.classList.remove('disabled');
-            }
-
-            // Show Prestige Button if ready (e.g. > 10k lifetime lines)
-            const prestigeBtn = document.getElementById('prestige-btn');
-            if (game.lifetimeLines > 10000) {
-                prestigeBtn.style.display = 'block';
-                const bonus = calculatePrestigeBonus();
-                prestigeBtn.innerText = `IPO NOW (Gain +${bonus.toFixed(2)}x Boost)`;
-            } else {
-                prestigeBtn.style.display = 'none';
-            }
-        }
-
-        // --- Save System ---
-        function saveGame() {
-            localStorage.setItem('aiStartupIPO', JSON.stringify(game));
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem('aiStartupIPO');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                // Merge saves carefully to avoid breaking on updates
-                game = { ...game, ...parsed };
-                updateUI();
-            }
-        }
-
-        loadGame();
-        updateUI();
-
-    </script>
-</body>
-
-</html>
+        .upgrade-btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #555;
+            padding:

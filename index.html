@@ -79,4 +79,190 @@
             background: #1a1a1a;
             color: #fff;
             border: 1px solid #555;
-            padding:
+            padding: 10px 20px;
+            width: 100%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .upgrade-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- SECURITY BREACH (THE FIX) --- */
+        #security-breach-btn {
+            /* Positioning logic for Mobile */
+            position: fixed; 
+            top: 15%;        
+            left: 50%;
+            transform: translateX(-50%); /* Center it horizontally */
+            
+            /* Visibility logic */
+            display: none;   /* Hidden by default */
+            z-index: 9999;   /* Crucial: Sit on top of everything */
+            
+            /* Styling */
+            background-color: #ff003c;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px #ff003c;
+            animation: pulse 0.5s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 10px #ff003c; transform: translateX(-50%) scale(1); }
+            to { box-shadow: 0 0 30px #ff003c; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* Helper text */
+        .log {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 10px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MAINFRAME ACCESS</h1>
+    
+    <div id="score-container">
+        <span id="score">0</span> TB
+    </div>
+
+    <button id="hack-btn">MINE DATA</button>
+
+    <div id="upgrades">
+        <button id="auto-miner-btn" class="upgrade-btn" onclick="buyAutoMiner()">
+            Deploy Bot (Cost: 50 TB)
+        </button>
+        <div class="log" id="game-log">System Ready...</div>
+    </div>
+
+    <button id="security-breach-btn">⚠️ SECURITY BREACH ⚠️<br><small>Tap to patch!</small></button>
+
+    <script>
+        // --- GAME STATE ---
+        let score = 0;
+        let autoMinerCount = 0;
+        let autoMinerCost = 50;
+        let breachActive = false;
+
+        // --- DOM ELEMENTS ---
+        const scoreEl = document.getElementById('score');
+        const logEl = document.getElementById('game-log');
+        const hackBtn = document.getElementById('hack-btn');
+        const autoMinerBtn = document.getElementById('auto-miner-btn');
+        const breachBtn = document.getElementById('security-breach-btn');
+
+        // --- CORE FUNCTIONS ---
+        function updateUI() {
+            scoreEl.innerText = Math.floor(score);
+            autoMinerBtn.innerText = `Deploy Bot (Cost: ${autoMinerCost} TB) [Owned: ${autoMinerCount}]`;
+            
+            // Enable/Disable button based on cost
+            if(score >= autoMinerCost) {
+                autoMinerBtn.disabled = false;
+                autoMinerBtn.style.borderColor = "#00ff41";
+            } else {
+                autoMinerBtn.disabled = true;
+                autoMinerBtn.style.borderColor = "#555";
+            }
+        }
+
+        function addScore(amount) {
+            score += amount;
+            updateUI();
+        }
+
+        // --- PLAYER ACTIONS ---
+        hackBtn.addEventListener('click', () => {
+            addScore(1);
+        });
+        
+        // Prevent double-tap zoom on main button
+        hackBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Stop zoom
+            addScore(1);
+            hackBtn.style.transform = "scale(0.95)";
+            setTimeout(() => hackBtn.style.transform = "scale(1)", 100);
+        }, {passive: false});
+
+        function buyAutoMiner() {
+            if (score >= autoMinerCost) {
+                score -= autoMinerCost;
+                autoMinerCount++;
+                autoMinerCost = Math.floor(autoMinerCost * 1.5);
+                logEl.innerText = "Bot Deployed. Passive mining increased.";
+                updateUI();
+            }
+        }
+
+        // --- PASSIVE INCOME LOOP ---
+        setInterval(() => {
+            if (autoMinerCount > 0) {
+                addScore(autoMinerCount);
+            }
+        }, 1000);
+
+        // --- SECURITY BREACH LOGIC (THE FIX) ---
+        
+        function triggerBreach() {
+            if (breachActive) return;
+            
+            breachActive = true;
+            breachBtn.style.display = 'block'; // Show button
+            logEl.innerText = "⚠️ ALERT: SECURITY BREACH DETECTED ⚠️";
+            logEl.style.color = "#ff003c";
+
+            // If not clicked in 5 seconds, you lose points
+            setTimeout(() => {
+                if (breachActive) {
+                    breachBtn.style.display = 'none';
+                    breachActive = false;
+                    score = Math.max(0, score - 200); // Penalty
+                    logEl.innerText = "Breach successful. Data stolen.";
+                    logEl.style.color = "#888";
+                    updateUI();
+                    scheduleNextBreach();
+                }
+            }, 5000);
+        }
+
+        function resolveBreach(e) {
+            if (e) e.preventDefault(); // Prevent ghost clicks on mobile
+            
+            if (breachActive) {
+                breachActive = false;
+                breachBtn.style.display = 'none'; // Hide button
+                addScore(500); // Reward
+                logEl.innerText = "Threat neutralized. +500 TB reward.";
+                logEl.style.color = "#00ff41";
+                scheduleNextBreach();
+            }
+        }
+
+        function scheduleNextBreach() {
+            // Random time between 10 and 30 seconds
+            const delay = Math.random() * 20000 + 10000;
+            setTimeout(triggerBreach, delay);
+        }
+
+        // Add listeners for both Touch and Click to ensure mobile compatibility
+        breachBtn.addEventListener('touchstart', resolveBreach, {passive: false});
+        breachBtn.addEventListener('click', resolveBreach);
+
+        // Start the random timer
+        scheduleNextBreach();
+
+    </script>
+</body>
+</html>
